@@ -1,3 +1,217 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --color-bg: #0D1117; /* Fond sombre, presque noir */
+        --color-text-primary: #E6EDF3; /* Texte principal clair */
+        --color-text-secondary: #7D8590; /* Texte secondaire grisé */
+        --color-accent-industrial: #F78166; /* Orange industriel (type rouille/cuivre) */
+        --color-accent-medical: #3FB950; /* Vert médical vif */
+        --color-border: #30363D; /* Bordures sombres et subtiles */
+        --color-surface: #161B22; /* Surface des panneaux légèrement plus claire */
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        font-family: 'Exo 2', sans-serif;
+        background-color: var(--color-bg);
+        color: var(--color-text-primary);
+        overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-border);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #484F58;
+    }
+}
+
+@layer components {
+    #animated-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background-image:
+            radial-gradient(ellipse at top, transparent 0%, var(--color-bg) 70%),
+            radial-gradient(ellipse at bottom, transparent 0%, var(--color-bg) 70%),
+            repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(247, 129, 102, 0.05) 2px, transparent 49px),
+            repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(247, 129, 102, 0.05) 2px, transparent 49px);
+        background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+        animation: moveGrid 60s linear infinite;
+    }
+    @keyframes moveGrid {
+        from { background-position: 0 0, 0 0, 0 0, 0 0; }
+        to { background-position: 0 0, 0 0, -1000px 500px, -1000px 500px; }
+    }
+
+    .font-orbitron {
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hud-panel {
+        background-color: color-mix(in srgb, var(--color-surface) 70%, transparent);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 0 20px rgba(247, 129, 102, 0.1);
+    }
+
+    .tab-button {
+        transition: all 0.3s ease;
+        color: var(--color-text-secondary);
+        border-bottom: 2px solid transparent;
+    }
+    .tab-button.active {
+        color: var(--color-accent-industrial);
+        border-bottom-color: var(--color-accent-industrial);
+    }
+    .tab-button:not(.active):hover {
+        color: var(--color-text-primary);
+        background-color: rgba(247, 129, 102, 0.05);
+    }
+
+    .modal-overlay {
+        transition: opacity 0.3s ease;
+    }
+    .modal-content {
+        transition: transform 0.3s ease;
+    }
+    .modal-overlay.hidden {
+        pointer-events: none;
+        opacity: 0;
+    }
+    .modal-overlay.hidden .modal-content {
+        transform: scale(0.95);
+    }
+
+    .accordion-header {
+        transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .accordion-icon {
+        transition: transform 0.3s ease;
+    }
+    .accordion-item.open .accordion-icon {
+        transform: rotate(180deg);
+    }
+    .accordion-item.open .accordion-content {
+        max-height: 2000px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .form-input, .form-select {
+        background-color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+        transition: all 0.3s ease;
+    }
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--color-accent-industrial);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-industrial) 30%, transparent);
+    }
+    .form-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%237D8590' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-primary {
+        background-color: var(--color-accent-industrial);
+        color: var(--color-bg);
+        border: 1px solid var(--color-accent-industrial);
+    }
+    .btn-primary:hover {
+        background-color: transparent;
+        color: var(--color-accent-industrial);
+        box-shadow: 0 0 15px color-mix(in srgb, var(--color-accent-industrial) 30%, transparent);
+    }
+    .btn-medical {
+        background-color: var(--color-accent-medical);
+        color: var(--color-bg);
+        border: 1px solid var(--color-accent-medical);
+    }
+    .btn-medical:hover {
+        background-color: transparent;
+        color: var(--color-accent-medical);
+        box-shadow: 0 0 15px color-mix(in srgb, var(--color-accent-medical) 30%, transparent);
+    }
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--color-border);
+        border-top-color: var(--color-accent-industrial);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    #loading-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background-color: var(--color-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.7s ease-out, visibility 0.7s ease-out;
+        opacity: 1;
+        visibility: visible;
+    }
+    body.loaded #loading-screen {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
