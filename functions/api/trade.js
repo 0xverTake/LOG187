@@ -4,21 +4,48 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-async function handlePost(context) {
+export async function onRequest(context) {
+    if (context.request.method === 'OPTIONS') {
+        return new Response(null, { headers: corsHeaders });
+    }
+
+    if (context.request.method !== 'POST') {
+        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+    }
+
     try {
-        const { query, variables } = await context.request.json();
+        // Récupérer les données envoyées par le client (budget, cargo)
+        const { budget, cargo } = await context.request.json();
+
+        // Construire le corps de la requête pour l'API REST externe
+        const tradeForm = {
+            "budget": budget,
+            "ship": {
+                "cargo": cargo
+            },
+            "item": {},
+            "from": {},
+            "to": {},
+            "options": {
+                "factionReputation": [],
+                "securityLevel": "ANY",
+                "avoid": [],
+                "limit": 10
+            }
+        };
         
-        const response = await fetch('https://sc-trade.tools/graphql', {
+        const response = await fetch('https://sc-trade.tools/api/tools/trades', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, variables }),
+            body: JSON.stringify(tradeForm),
         });
 
         if (!response.ok) {
-            throw new Error(`Erreur de l'API externe: ${response.statusText}`);
+            throw new Error(`API externe a retourné une erreur: ${response.statusText}`);
         }
 
         const data = await response.json();
+
         return new Response(JSON.stringify(data), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -28,23 +55,5 @@ async function handlePost(context) {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
-    }
-}
-
-function handleOptions() {
-    return new Response(null, { headers: corsHeaders });
-}
-
-export async function onRequest(context) {
-    switch (context.request.method) {
-        case 'POST':
-            return await handlePost(context);
-        case 'OPTIONS':
-            return handleOptions();
-        default:
-            return new Response('Method Not Allowed', {
-                status: 405,
-                headers: corsHeaders,
-            });
     }
 }

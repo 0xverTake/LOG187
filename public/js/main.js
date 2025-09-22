@@ -25,43 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainer = document.getElementById('trade-results-container');
 
     async function fetchTradeData(budget, cargo) {
-        const query = `
-            query getTradeRoutes($budget: Int, $cargo: Int) {
-                trades(budget: $budget, cargo: $cargo) {
-                    best {
-                        profit
-                        item { name }
-                        from { name }
-                        to { name }
-                        buyPrice
-                        sellPrice
-                        scu
-                    }
-                }
-            }
-        `;
-        const variables = { budget: parseInt(budget), cargo: parseInt(cargo) };
-
         try {
-            const response = await fetch('/api/trade', {
+            const response = await fetch('/functions/api/trade', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query, variables }),
+                body: JSON.stringify({ 
+                    budget: parseInt(budget), 
+                    cargo: parseInt(cargo) 
+                }),
             });
             if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-            const json = await response.json();
-            
-            if (!json.data || !json.data.trades || !json.data.trades.best) {
-                throw new Error("Réponse de l'API invalide.");
-            }
+            const data = await response.json();
 
-            return json.data.trades.best.map(route => ({
+            // La réponse de l'API REST est un tableau direct de routes
+            return data.map(route => ({
                 profit: route.profit,
                 item: { name: route.item.name },
                 source: { name: route.from.name },
                 destination: { name: route.to.name },
-                buy: { price: route.buyPrice },
-                sell: { price: route.sellPrice },
+                buy: { price: route.buy.price },
+                sell: { price: route.sell.price },
                 scu: route.scu
             }));
         } catch (error) {
