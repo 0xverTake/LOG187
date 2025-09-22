@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const variables = { budget: parseInt(budget), cargo: parseInt(cargo) };
 
         try {
-            const response = await fetch('https://api.sc-trade.tools/v3/graphql', {
+            const response = await fetch('https://sc-trade.tools/graphql', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query, variables }),
@@ -115,5 +115,114 @@ document.addEventListener('DOMContentLoaded', () => {
         displayTradeResults(routes);
         
         findRoutesBtn.disabled = false;
+    });
+
+    // --- Accordion Logic ---
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    });
+
+    // --- LOGIQUE DU PLANIFICATEUR (Full-Stack) ---
+    const missionForm = document.getElementById('mission-planner-form');
+    const missionList = document.getElementById('mission-list');
+    const plannerApiUrl = '/functions/api/missions';
+
+    async function fetchAndRenderMissions() {
+        missionList.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; gap: 1rem;"><div class="spinner"></div><p>Chargement...</p></div>`;
+        try {
+            const response = await fetch(plannerApiUrl);
+            if (!response.ok) throw new Error('Erreur de chargement');
+            const missions = await response.json();
+
+            if (!missions || missions.length === 0) {
+                missionList.innerHTML = `<p>Aucune mission planifiée.</p>`;
+                return;
+            }
+
+            missionList.innerHTML = missions.map(mission => `
+                <div class="mission-card" data-id="${mission.id}">
+                    <div class="mission-card-content">
+                        <h4>${mission.title}</h4>
+                        <p>${mission.details}</p>
+                        <small>Type: ${mission.type}</small>
+                    </div>
+                    <button class="delete-mission-btn" data-id="${mission.id}"><i data-lucide="trash-2"></i></button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        } catch (error) {
+            missionList.innerHTML = `<p>${error.message}</p>`;
+        }
+    }
+
+    missionForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = missionForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
+        const missionData = {
+            title: document.getElementById('mission-title').value,
+            type: document.getElementById('mission-type').value,
+            details: document.getElementById('mission-details').value,
+        };
+
+        try {
+            const response = await fetch(plannerApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(missionData),
+            });
+            if (!response.ok) throw new Error('Impossible d\'ajouter la mission');
+            missionForm.reset();
+            await fetchAndRenderMissions();
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    missionList.addEventListener('click', async (e) => {
+        const deleteBtn = e.target.closest('.delete-mission-btn');
+        if (deleteBtn) {
+            const missionId = deleteBtn.dataset.id;
+            if (!confirm(`Supprimer la mission ID: ${missionId} ?`)) return;
+
+            try {
+                const response = await fetch(`${plannerApiUrl}?id=${missionId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error('La suppression a échoué');
+                document.querySelector(`.mission-card[data-id="${missionId}"]`).remove();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    });
+
+    document.querySelector('.tab-button[data-tab="planner"]').addEventListener('click', fetchAndRenderMissions);
+
+    // --- LOGIQUE ASSISTANCE ---
+    const assistanceForm = document.getElementById('assistance-form');
+    assistanceForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const btn = assistanceForm.querySelector('button');
+        btn.innerHTML = `<div class="spinner"></div><span>Envoi...</span>`;
+        btn.disabled = true;
+
+        setTimeout(() => {
+            btn.innerHTML = `<i data-lucide="check-circle"></i><span>Balise Émise!</span>`;
+            setTimeout(() => {
+                btn.innerHTML = `<i data-lucide="alert-triangle"></i>Émettre la balise`;
+                btn.disabled = false;
+                assistanceForm.reset();
+                lucide.createIcons();
+            }, 2500);
+        }, 1500);
     });
 });

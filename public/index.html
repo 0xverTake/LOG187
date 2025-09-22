@@ -20,6 +20,7 @@
             <button class="tab-button active" data-tab="commerce">Commerce</button>
             <button class="tab-button" data-tab="guides">Guides</button>
             <button class="tab-button" data-tab="planner">Planificateur</button>
+            <button class="tab-button" data-tab="assistance">Assistance</button>
         </nav>
 
         <main>
@@ -46,19 +47,79 @@
                 </div>
             </div>
 
-            <!-- ONGLET GUIDES (Contenu à ajouter) -->
+            <!-- ONGLET GUIDES -->
             <div id="guides" class="tab-content">
                 <div class="hud-panel">
-                    <h2 class="panel-title"><i data-lucide="book-open"></i>Guides</h2>
-                    <p>Section des guides en cours de construction.</p>
+                    <h2 class="panel-title"><i data-lucide="book-open"></i>Guides Stratégiques</h2>
+                    <div class="accordion">
+                        <div class="accordion-item">
+                            <button class="accordion-header">Guide du Débutant</button>
+                            <div class="accordion-content">
+                                <p><strong>Premières missions :</strong> Optez pour des missions de livraison. Elles sont sûres et vous apprennent les bases de la navigation.</p>
+                                <p><strong>Équipement essentiel :</strong> Un Multi-Tool avec l'attachement Tracteur Beam est indispensable.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header">Professions Rentables</button>
+                            <div class="accordion-content">
+                                <p><strong>Minage :</strong> Scannez les astéroïdes (touche V) et cherchez des roches riches en Quantainium ou Laranite.</p>
+                                <p><strong>Chasse à la prime :</strong> Commencez par les cibles VHRT une fois que vous avez un chasseur bien équipé comme un Gladius.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- ONGLET PLANIFICATEUR (Contenu à ajouter) -->
+            <!-- ONGLET PLANIFICATEUR -->
             <div id="planner" class="tab-content">
                 <div class="hud-panel">
-                    <h2 class="panel-title"><i data-lucide="clipboard-list"></i>Planificateur</h2>
-                    <p>Section du planificateur de missions en cours de construction.</p>
+                    <h2 class="panel-title"><i data-lucide="clipboard-list"></i>Planificateur de Missions</h2>
+                    <form id="mission-planner-form" class="form-grid">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="mission-title" class="form-label">Titre de la mission</label>
+                            <input type="text" id="mission-title" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mission-type" class="form-label">Type</label>
+                            <select id="mission-type" class="form-select" required>
+                                <option value="Bounty">Chasse à la prime</option>
+                                <option value="Mining">Minage</option>
+                                <option value="Transport">Transport</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="mission-details" class="form-label">Détails</label>
+                            <textarea id="mission-details" class="form-input" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="submit" class="btn"><i data-lucide="plus-circle"></i>Ajouter</button>
+                        </div>
+                    </form>
+                    <div id="mission-list" class="mt-8"></div>
+                </div>
+            </div>
+
+            <!-- ONGLET ASSISTANCE -->
+            <div id="assistance" class="tab-content">
+                <div class="hud-panel">
+                    <h2 class="panel-title"><i data-lucide="siren"></i>Balise de Détresse</h2>
+                    <form id="assistance-form" class="form-grid">
+                        <div class="form-group">
+                            <label for="assistance-type" class="form-label">Type d'assistance</label>
+                            <select id="assistance-type" class="form-select" required>
+                                <option value="Medical">Médicale</option>
+                                <option value="Combat">Soutien Combat</option>
+                                <option value="Transport">Transport</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assistance-location" class="form-label">Localisation</label>
+                            <input type="text" id="assistance-location" class="form-input" required>
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="submit" class="btn btn-lime"><i data-lucide="alert-triangle"></i>Émettre la balise</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
