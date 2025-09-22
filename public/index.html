@@ -3,434 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log 187 - Operations Hub v3</title>
-    <link href="/output.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Ajout de la bibliothèque d'icônes Lucide -->
+    <title>LOG 187 - Operations Hub</title>
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="min-h-screen antialiased text-primary bg-background">
-    
-    <div id="loading-screen" class="loader-content text-center">
-        <div>
-            <h1 class="font-orbitron text-4xl font-bold text-text-primary tracking-widest">LOG <span class="text-accent-industrial">187</span></h1>
-            <div class="spinner mx-auto mt-6"></div>
-            <p class="text-text-secondary mt-4 tracking-wider">INITIALISATION DES SYSTÈMES...</p>
-        </div>
-    </div>
-
+<body>
     <div id="animated-bg"></div>
 
-    <div id="app" class="container mx-auto p-4 md:p-8">
-        <header class="text-center mb-8">
-            <h1 class="font-orbitron text-4xl md:text-6xl font-bold text-text-primary tracking-widest">
-                LOG <span class="text-accent-industrial">187</span>
-            </h1>
-            <p class="text-text-secondary mt-2 text-lg tracking-wider">OPERATIONS HUB</p>
+    <div class="container">
+        <header>
+            <h1 class="site-title">LOG 187</h1>
+            <p class="site-subtitle">OPERATIONS HUB</p>
         </header>
 
-        <nav class="flex flex-wrap justify-center mb-8 rounded-lg p-2 gap-2">
-            <button class="tab-button active inline-flex items-center py-2 px-4" data-tab="commerce"><i data-lucide="bar-chart-3" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Commerce</span></button>
-            <button class="tab-button inline-flex items-center py-2 px-4" data-tab="guides"><i data-lucide="book-open" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Guides</span></button>
-            <button class="tab-button inline-flex items-center py-2 px-4" data-tab="planner"><i data-lucide="clipboard-list" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Planificateur</span></button>
-            <button class="tab-button inline-flex items-center py-2 px-4" data-tab="assistance"><i data-lucide="siren" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Assistance</span></button>
+        <nav>
+            <button class="tab-button active" data-tab="commerce">Commerce</button>
+            <button class="tab-button" data-tab="guides">Guides</button>
+            <button class="tab-button" data-tab="planner">Planificateur</button>
         </nav>
 
         <main>
             <!-- ONGLET COMMERCE -->
-            <div id="commerce" class="tab-content active hud-panel rounded-lg p-6">
-                <h2 class="font-orbitron text-2xl text-accent-industrial mb-4 flex items-center gap-3"><i data-lucide="search"></i>Chercheur de Routes Commerciales</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label for="budget" class="block text-sm font-medium text-text-secondary mb-1">Budget (aUEC)</label>
-                        <input type="number" id="budget" class="form-input w-full rounded-md p-2" value="250000">
+            <div id="commerce" class="tab-content active">
+                <div class="hud-panel">
+                    <h2 class="panel-title"><i data-lucide="bar-chart-3"></i>Routes Commerciales</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="budget" class="form-label">Budget (aUEC)</label>
+                            <input type="number" id="budget" class="form-input" value="250000">
+                        </div>
+                        <div class="form-group">
+                            <label for="cargo" class="form-label">Soute (SCU)</label>
+                            <input type="number" id="cargo" class="form-input" value="64">
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button id="find-routes-btn" class="btn"><i data-lucide="send"></i>Rechercher</button>
+                        </div>
                     </div>
-                    <div>
-                        <label for="cargo" class="block text-sm font-medium text-text-secondary mb-1">Soute (SCU)</label>
-                        <input type="number" id="cargo" class="form-input w-full rounded-md p-2" value="64">
+                    <div id="trade-results-container">
+                        <p>Entrez vos critères pour trouver les routes commerciales les plus rentables.</p>
                     </div>
-                    <div class="md:self-end">
-                        <button id="find-routes-btn" class="btn btn-primary w-full"><i data-lucide="send"></i><span>Lancer la Recherche</span></button>
-                    </div>
-                </div>
-                <div id="trade-results-container">
-                    <p class="text-center text-text-secondary">Entrez votre budget et la capacité de votre soute pour trouver les routes les plus rentables.</p>
                 </div>
             </div>
 
-            <!-- ONGLET GUIDES -->
+            <!-- ONGLET GUIDES (Contenu à ajouter) -->
             <div id="guides" class="tab-content">
-                 <p class="text-center text-text-secondary text-sm mb-4">Guides compilés à partir de sources communautaires pour les patchs récents.</p>
-                <div class="hud-panel rounded-lg p-2 md:p-4 space-y-2">
-                    <div class="accordion-item bg-surface/50 rounded-lg border border-border">
-                        <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
-                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="graduation-cap" class="text-accent-industrial"></i>Guide du Débutant</span>
-                            <i data-lucide="chevron-down" class="accordion-icon text-text-secondary"></i>
-                        </button>
-                        <div class="accordion-content px-4 text-text-primary space-y-3">
-                            <p><strong>Premières missions :</strong> Optez pour des missions de livraison ou de recherche. Elles sont sûres et vous apprennent les bases de la navigation et du vol.</p>
-                            <p><strong>Équipement essentiel :</strong> Un sac à dos, un Multi-Tool avec l'attachement Tracteur Beam sont indispensables pour commencer. L'attachement minier est un plus pour les grottes.</p>
-                        </div>
-                    </div>
-                     <div class="accordion-item bg-surface/50 rounded-lg border border-border">
-                        <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
-                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="briefcase" class="text-accent-industrial"></i>Professions & Gameplay</span>
-                             <i data-lucide="chevron-down" class="accordion-icon text-text-secondary"></i>
-                        </button>
-                        <div class="accordion-content px-4 text-text-primary space-y-3">
-                           <p><strong>Minage :</strong> Achetez un ROC ou un Prospector. Scannez les astéroïdes (touche V) et cherchez des roches riches en Quantainium, Laranite, ou Agricium pour un profit maximal.</p>
-                           <p><strong>Chasse à la prime (Bounty Hunting) :</strong> Commencez par les cibles VHRT (Very High Risk Target) une fois que vous avez un chasseur bien équipé comme un Gladius ou un Sabre. Visez les moteurs et les générateurs.</p>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-surface/50 rounded-lg border border-border">
-                        <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
-                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="swords" class="text-accent-industrial"></i>Builds PvP / Dogfight</span>
-                            <i data-lucide="chevron-down" class="accordion-icon text-text-secondary"></i>
-                        </button>
-                        <div class="accordion-content px-4 text-text-primary space-y-3">
-                           <p><strong>Chasseur léger (Gladius/Arrow) :</strong> Full Répéteurs Laser (CF-337 Panther). Boucliers rapides comme les FR-66. Idéal pour sa manœuvrabilité.</p>
-                           <p><strong>Chasseur lourd (Vanguard) :</strong> Arme S5 fixe (AD5B), complétée par des armes S2. Boucliers résistants. Excellent pour le jeu en duo ou solo contre des cibles plus grosses.</p>
-                        </div>
-                    </div>
-                     <div class="accordion-item bg-surface/50 rounded-lg border border-border">
-                         <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
-                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="link" class="text-accent-industrial"></i>Ressources Utiles</span>
-                             <i data-lucide="chevron-down" class="accordion-icon text-text-secondary"></i>
-                        </button>
-                        <div class="accordion-content px-4 text-text-primary space-y-2">
-                            <a href="https://sc-trade.tools/" target="_blank" class="flex items-center gap-2 hover:text-accent-industrial">SC Trade Tools <i data-lucide="external-link" class="h-4 w-4"></i></a>
-                            <a href="https://www.erkul.games/" target="_blank" class="flex items-center gap-2 hover:text-accent-industrial">Erkul Games (Loadouts) <i data-lucide="external-link" class="h-4 w-4"></i></a>
-                            <a href="https://finder.cstone.space/" target="_blank" class="flex items-center gap-2 hover:text-accent-industrial">Cornerstone (Minage) <i data-lucide="external-link" class="h-4 w-4"></i></a>
-                        </div>
-                    </div>
+                <div class="hud-panel">
+                    <h2 class="panel-title"><i data-lucide="book-open"></i>Guides</h2>
+                    <p>Section des guides en cours de construction.</p>
                 </div>
             </div>
 
-            <!-- ONGLET PLANIFICATEUR -->
-            <div id="planner" class="tab-content hud-panel rounded-lg p-6">
-                <h2 class="font-orbitron text-2xl text-accent-industrial mb-4 flex items-center gap-3"><i data-lucide="file-plus-2"></i>Créer un Plan de Mission</h2>
-                <form id="mission-planner-form" class="space-y-4">
-                    <input type="text" id="mission-title" placeholder="Titre de la mission (ex: Opération Nighthawk)" class="form-input w-full rounded-md p-2" required>
-                    <select id="mission-type" class="form-select w-full rounded-md p-2" required>
-                        <option value="Bounty">Chasse à la prime</option>
-                        <option value="Mining">Minage</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Exploration">Exploration</option>
-                    </select>
-                    <textarea id="mission-details" placeholder="Détails, objectifs, membres assignés..." class="form-input w-full rounded-md p-2 h-24" required></textarea>
-                    <button type="submit" class="btn btn-primary"><i data-lucide="plus-circle"></i>Ajouter au planning</button>
-                </form>
-                <div class="mt-8">
-                    <h3 class="font-orbitron text-xl text-text-primary mb-4">Missions Actives</h3>
-                    <div id="mission-list" class="space-y-3">
-                         <p class="text-center text-text-secondary">Aucune mission planifiée pour le moment.</p>
-                    </div>
+            <!-- ONGLET PLANIFICATEUR (Contenu à ajouter) -->
+            <div id="planner" class="tab-content">
+                <div class="hud-panel">
+                    <h2 class="panel-title"><i data-lucide="clipboard-list"></i>Planificateur</h2>
+                    <p>Section du planificateur de missions en cours de construction.</p>
                 </div>
-            </div>
-
-            <!-- ONGLET ASSISTANCE -->
-            <div id="assistance" class="tab-content hud-panel rounded-lg p-6">
-                <h2 class="font-orbitron text-2xl text-accent-medical mb-4 flex items-center gap-3"><i data-lucide="radio-tower"></i>Émettre une Balise de Détresse</h2>
-                <form id="assistance-form" class="space-y-4">
-                    <select id="assistance-type" class="form-select w-full rounded-md p-2" required>
-                        <option value="Medical">Assistance Médicale</option>
-                        <option value="Combat">Soutien au Combat</option>
-                        <option value="Transport">Transport / Récupération</option>
-                        <option value="Refuel">Ravitaillement</option>
-                    </select>
-                     <input type="text" id="assistance-location" placeholder="Localisation (ex: Près de Yela, ceinture d'astéroïdes)" class="form-input w-full rounded-md p-2" required>
-                    <textarea id="assistance-details" placeholder="Description de la situation..." class="form-input w-full rounded-md p-2 h-24"></textarea>
-                    <button type="submit" class="btn btn-medical"><i data-lucide="alert-triangle"></i>Envoyer la demande</button>
-                </form>
             </div>
         </main>
-        
-        <footer class="text-center text-text-secondary/50 mt-12 text-sm">
-            <p>&copy; 2025 - Corporation Log 187</p>
-            <button id="open-credits-modal" class="text-text-secondary/70 hover:text-accent-industrial transition">Crédits & Créateur</button>
-        </footer>
-    </div>
-    
-    <div id="credits-modal" class="modal-overlay hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4 z-50">
-        <div class="modal-content hud-panel rounded-lg p-8 max-w-md w-full text-center relative">
-            <button id="close-credits-modal" class="absolute top-2 right-2 text-text-secondary hover:text-text-primary transition"><i data-lucide="x"></i></button>
-            <h3 class="font-orbitron text-2xl text-accent-industrial mb-4">Crédits</h3>
-            <p class="text-text-primary">Interface conçue et développée par [Votre Nom/Pseudo].</p>
-            <p class="text-text-secondary text-sm mt-2">Données commerciales fournies par l'API de SC Trade Tools.</p>
-        </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- Initialisation des icônes Lucide ---
-            lucide.createIcons();
-
-            // --- Loading Screen Logic ---
-            window.onload = () => {
-                setTimeout(() => document.body.classList.add('loaded'), 500);
-            };
-
-            // --- Tab Navigation Logic ---
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetTabId = button.dataset.tab;
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    tabContents.forEach(content => content.classList.toggle('active', content.id === targetTabId));
-                });
-            });
-
-            // --- Accordion Logic ---
-            document.querySelectorAll('.accordion-item .accordion-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    header.parentElement.classList.toggle('open');
-                });
-            });
-
-            // --- Modal Logic ---
-            const openModalBtn = document.getElementById('open-credits-modal');
-            const closeModalBtn = document.getElementById('close-credits-modal');
-            const modal = document.getElementById('credits-modal');
-            const openModal = () => modal.classList.remove('hidden');
-            const closeModal = () => modal.classList.add('hidden');
-            openModalBtn.addEventListener('click', openModal);
-            closeModalBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', e => e.target === modal && closeModal());
-            document.addEventListener('keydown', e => e.key === 'Escape' && !modal.classList.contains('hidden') && closeModal());
-            
-            // --- LOGIQUE DE L'ONGLET COMMERCE ---
-            const findRoutesBtn = document.getElementById('find-routes-btn');
-            const resultsContainer = document.getElementById('trade-results-container');
-            const API_URL = 'https://sc-trade.tools/graphql';
-
-            async function fetchTradeData(budget, cargo) {
-                const query = `
-                    query getTradeRoutes($budget: Int, $cargo: Int) {
-                        trades(budget: $budget, cargo: $cargo) {
-                            best {
-                                profit
-                                item {
-                                    name
-                                }
-                                from {
-                                    name
-                                }
-                                to {
-                                    name
-                                }
-                                buyPrice
-                                sellPrice
-                                scu
-                            }
-                        }
-                    }
-                `;
-
-                const variables = {
-                    budget: parseInt(budget),
-                    cargo: parseInt(cargo)
-                };
-
-                try {
-                    const response = await fetch('https://api.sc-trade.tools/v3/graphql', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ query, variables }),
-                    });
-                    if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-                    const json = await response.json();
-                    // Adapter la nouvelle structure de réponse à l'ancienne
-                    return json.data.trades.best.map(route => ({
-                        profit: route.profit,
-                        item: { name: route.item.name },
-                        source: { name: route.from.name },
-                        destination: { name: route.to.name },
-                        buy: { price: route.buyPrice },
-                        sell: { price: route.sellPrice },
-                        scu: route.scu
-                    }));
-                } catch (error) {
-                    console.error("Failed to fetch trade data:", error);
-                    resultsContainer.innerHTML = `<p class="text-center text-red-400">Erreur lors de la récupération des données de l'API v3. Le service est peut-être indisponible.</p>`;
-                    return null;
-                }
-            }
-
-            function displayTradeResults(routes) {
-                if (!routes || routes.length === 0) {
-                    resultsContainer.innerHTML = `<p class="text-center text-accent-industrial">Aucune route profitable trouvée pour ces critères. Essayez d'augmenter le budget.</p>`;
-                    return;
-                }
-                
-                let html = '<div class="space-y-4">';
-                routes.slice(0, 10).forEach(route => { // On affiche les 10 meilleures
-                    html += `
-                        <div class="bg-surface/50 border border-border rounded-lg p-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                            <div class="md:col-span-2">
-                                <p class="font-bold text-lg text-text-primary">${route.item.name}</p>
-                                <p class="text-sm text-text-secondary">${Math.round(route.scu)} SCU</p>
-                            </div>
-                            <div class="text-sm">
-                                <p class="text-text-secondary">ACHAT</p>
-                                <p>${route.source.name}</p>
-                                <p class="font-mono text-text-primary">${route.buy.price.toFixed(2)} aUEC</p>
-                            </div>
-                             <div class="text-sm">
-                                <p class="text-text-secondary">VENTE</p>
-                                <p>${route.destination.name}</p>
-                                <p class="font-mono text-text-primary">${route.sell.price.toFixed(2)} aUEC</p>
-                            </div>
-                            <div class="md:col-span-4 mt-2 md:mt-0 text-center bg-surface p-2 rounded-md">
-                                <p class="font-bold text-xl text-accent-medical">Profit: ${Math.round(route.profit).toLocaleString('fr-FR')} aUEC</p>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                resultsContainer.innerHTML = html;
-            }
-
-            findRoutesBtn.addEventListener('click', async () => {
-                const budget = document.getElementById('budget').value;
-                const cargo = document.getElementById('cargo').value;
-
-                if (!budget || !cargo) {
-                    resultsContainer.innerHTML = `<p class="text-center text-red-400">Veuillez entrer un budget et une capacité de soute.</p>`;
-                    return;
-                }
-                
-                resultsContainer.innerHTML = `<div class="flex justify-center items-center gap-4"><div class="spinner"></div><p>Recherche des meilleures routes...</p></div>`;
-                findRoutesBtn.disabled = true;
-                findRoutesBtn.querySelector('span').textContent = 'Recherche...';
-
-                const routes = await fetchTradeData(budget, cargo);
-                displayTradeResults(routes);
-                
-                findRoutesBtn.disabled = false;
-                findRoutesBtn.querySelector('span').textContent = 'Lancer la Recherche';
-            });
-            
-            // --- LOGIQUE DU PLANIFICATEUR (Full-Stack) ---
-            const missionForm = document.getElementById('mission-planner-form');
-            const missionList = document.getElementById('mission-list');
-            const plannerApiUrl = '/functions/api/missions';
-
-            // Récupérer et afficher les missions
-            async function fetchAndRenderMissions() {
-                missionList.innerHTML = `<div class="flex justify-center items-center gap-4"><div class="spinner"></div><p>Chargement des missions...</p></div>`;
-                try {
-                    const response = await fetch(plannerApiUrl);
-                    if (!response.ok) throw new Error('Erreur de chargement du planning');
-                    const missions = await response.json();
-
-                    if (!missions || missions.length === 0) {
-                        missionList.innerHTML = `<p class="text-center text-slate-400">Aucune mission planifiée pour le moment.</p>`;
-                        return;
-                    }
-
-                    missionList.innerHTML = missions.map(mission => `
-                        <div class="mission-card bg-slate-900/50 border border-slate-700 rounded-lg p-4" data-id="${mission.id}">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span class="text-xs font-bold py-1 px-2 rounded-full bg-amber-500/20 text-amber-400">${mission.type}</span>
-                                    <h4 class="font-orbitron text-lg mt-2">${mission.title}</h4>
-                                </div>
-                                <button class="delete-mission-btn text-slate-500 hover:text-red-400" data-id="${mission.id}">
-                                    <i data-lucide="trash-2"></i>
-                                </button>
-                            </div>
-                            <p class="text-slate-300 mt-2 whitespace-pre-wrap">${mission.details}</p>
-                            <p class="text-xs text-slate-500 mt-3">ID: ${mission.id} - Créé le: ${new Date(mission.created_at).toLocaleDateString()}</p>
-                        </div>
-                    `).join('');
-                    lucide.createIcons();
-                } catch (error) {
-                    missionList.innerHTML = `<p class="text-center text-red-400">${error.message}</p>`;
-                }
-            }
-
-            // Ajouter une mission
-            missionForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const submitBtn = missionForm.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-
-                const missionData = {
-                    title: document.getElementById('mission-title').value,
-                    type: document.getElementById('mission-type').value,
-                    details: document.getElementById('mission-details').value,
-                };
-
-                try {
-                    const response = await fetch(plannerApiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(missionData),
-                    });
-                    if (!response.ok) throw new Error('Impossible d\'ajouter la mission');
-                    missionForm.reset();
-                    await fetchAndRenderMissions();
-                } catch (error) {
-                    alert(error.message);
-                } finally {
-                    submitBtn.disabled = false;
-                }
-            });
-
-            // Supprimer une mission (délégation d'événement)
-            missionList.addEventListener('click', async (e) => {
-                const deleteBtn = e.target.closest('.delete-mission-btn');
-                if (deleteBtn) {
-                    const missionId = deleteBtn.dataset.id;
-                    if (!confirm(`Voulez-vous vraiment supprimer la mission ID: ${missionId} ?`)) return;
-
-                    try {
-                        const response = await fetch(`${plannerApiUrl}?id=${missionId}`, {
-                            method: 'DELETE',
-                        });
-                        if (!response.ok) throw new Error('La suppression a échoué');
-                        
-                        // Supprimer l'élément du DOM
-                        document.querySelector(`.mission-card[data-id="${missionId}"]`).remove();
-
-                    } catch (error) {
-                        alert(error.message);
-                    }
-                }
-            });
-
-            // Chargement initial des missions
-            if (document.getElementById('planner').classList.contains('active')) {
-                fetchAndRenderMissions();
-            }
-            document.querySelector('.tab-button[data-tab="planner"]').addEventListener('click', fetchAndRenderMissions);
-
-            // --- LOGIQUE ASSISTANCE ---
-             const assistanceForm = document.getElementById('assistance-form');
-             assistanceForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                // Simule l'envoi
-                const btn = assistanceForm.querySelector('button');
-                btn.innerHTML = `<div class="spinner !w-5 !h-5"></div><span>Envoi en cours...</span>`;
-                btn.disabled = true;
-
-                setTimeout(() => {
-                    btn.innerHTML = `<i data-lucide="check-circle"></i><span>Balise envoyée !</span>`;
-                     setTimeout(() => {
-                        btn.innerHTML = `<i data-lucide="alert-triangle"></i>Envoyer la demande`;
-                        btn.disabled = false;
-                        assistanceForm.reset();
-                        lucide.createIcons();
-                    }, 2500);
-                }, 1500);
-             });
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
