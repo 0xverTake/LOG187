@@ -5,4 +5,4 @@ compatibility_date = "2023-10-30"
 [[d1_databases]]
 binding = "DB"
 database_name = "log187-missions"
-database_id = "" # <-- A remplir avec l'ID après la création de la DB
+database_id = "9d5ea2cb-06b6-4633-ad26-cd0225f56d06"
