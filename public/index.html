@@ -25,7 +25,7 @@
 
         <main>
             <!-- ONGLET COMMERCE -->
-            <div id="commerce" class="tab-content active">
+            <section id="commerce" class="tab-content active">
                 <div class="hud-panel">
                     <h2 class="panel-title"><i data-lucide="bar-chart-3"></i>Routes Commerciales</h2>
                     <div class="form-grid">
@@ -45,10 +45,10 @@
                         <p>Entrez vos critères pour trouver les routes commerciales les plus rentables.</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- ONGLET GUIDES -->
-            <div id="guides" class="tab-content">
+            <section id="guides" class="tab-content">
                 <div class="hud-panel">
                     <h2 class="panel-title"><i data-lucide="book-open"></i>Guides Stratégiques</h2>
                     <div class="accordion">
@@ -68,10 +68,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- ONGLET PLANIFICATEUR -->
-            <div id="planner" class="tab-content">
+            <section id="planner" class="tab-content">
                 <div class="hud-panel">
                     <h2 class="panel-title"><i data-lucide="clipboard-list"></i>Planificateur de Missions</h2>
                     <form id="mission-planner-form" class="form-grid">
@@ -97,10 +97,10 @@
                     </form>
                     <div id="mission-list" class="mt-8"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- ONGLET ASSISTANCE -->
-            <div id="assistance" class="tab-content">
+            <section id="assistance" class="tab-content">
                 <div class="hud-panel">
                     <h2 class="panel-title"><i data-lucide="siren"></i>Balise de Détresse</h2>
                     <form id="assistance-form" class="form-grid">
@@ -120,8 +120,12 @@
                             <button type="submit" class="btn btn-lime"><i data-lucide="alert-triangle"></i>Émettre la balise</button>
                         </div>
                     </form>
+                    <div id="beacon-list" class="mt-8">
+                        <h3 class="panel-title" style="font-size: 1.5rem; margin-bottom: 1rem;"><i data-lucide="broadcast"></i>Balises Actives</h3>
+                        <!-- Les balises seront injectées ici par le JS -->
+                    </div>
                 </div>
-            </div>
+            </section>
         </main>
     </div>
 
