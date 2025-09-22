@@ -4,41 +4,41 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-// Gère les requêtes GET pour récupérer toutes les missions
-async function handleGet({ env }) {
-    try {
-        const { results } = await env.DB.prepare("SELECT * FROM missions ORDER BY created_at DESC").all();
-        return new Response(JSON.stringify(results), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-    } catch (e) {
-        return new Response(JSON.stringify({ error: e.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-    }
-}
+async function handleRequest(context) {
+    const { request, env } = context;
 
-// Gère les requêtes POST pour ajouter une nouvelle mission
-async function handlePost({ request, env }) {
     try {
-        const mission = await request.json();
-        if (!mission.title || !mission.type || !mission.details) {
-            return new Response(JSON.stringify({ error: "Champs manquants" }), {
-                status: 400,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
-        }
-
-        const { results } = await env.DB.prepare("INSERT INTO missions (title, type, details) VALUES (?, ?, ?) RETURNING *")
-            .bind(mission.title, mission.type, mission.details)
-            .run();
+        switch (request.method) {
+            case 'GET':
+                const { results } = await env.DB.prepare("SELECT * FROM missions ORDER BY created_at DESC").all();
+                return new Response(JSON.stringify(results || []), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
             
-        return new Response(JSON.stringify(results), {
-            status: 201,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+            case 'POST':
+                const mission = await request.json();
+                if (!mission.title || !mission.type || !mission.details) {
+                    return new Response(JSON.stringify({ error: "Champs manquants" }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+                }
+                await env.DB.prepare("INSERT INTO missions (title, type, details) VALUES (?, ?, ?)")
+                    .bind(mission.title, mission.type, mission.details)
+                    .run();
+                return new Response(JSON.stringify({ message: "Mission ajoutée" }), { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+            case 'DELETE':
+                const id = new URL(request.url).searchParams.get('id');
+                if (!id) {
+                    return new Response(JSON.stringify({ error: "ID manquant" }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+                }
+                await env.DB.prepare("DELETE FROM missions WHERE id = ?").bind(id).run();
+                return new Response(null, { status: 204, headers: corsHeaders });
+
+            case 'OPTIONS':
+                return new Response(null, { headers: corsHeaders });
+
+            default:
+                return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+        }
     } catch (e) {
+        // Capture toutes les erreurs et renvoie une réponse JSON
         return new Response(JSON.stringify({ error: e.message }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -46,47 +46,4 @@ async function handlePost({ request, env }) {
     }
 }
 
-// Gère les requêtes DELETE pour supprimer une mission
-async function handleDelete({ request, env }) {
-    const url = new URL(request.url);
-    const id = url.searchParams.get('id');
-
-    if (!id) {
-        return new Response(JSON.stringify({ error: "ID de mission manquant" }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-    }
-
-    try {
-        await env.DB.prepare("DELETE FROM missions WHERE id = ?").bind(id).run();
-        return new Response(JSON.stringify({ message: "Mission supprimée avec succès" }), {
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-    } catch (e) {
-        return new Response(JSON.stringify({ error: e.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-    }
-}
-
-// Routeur principal pour gérer toutes les méthodes HTTP
-export async function onRequest(context) {
-    switch (context.request.method) {
-        case 'GET':
-            return await handleGet(context);
-        case 'POST':
-            return await handlePost(context);
-        case 'DELETE':
-            return await handleDelete(context);
-        case 'OPTIONS':
-            return new Response(null, { headers: corsHeaders });
-        default:
-            return new Response('Method Not Allowed', {
-                status: 405,
-                headers: corsHeaders,
-            });
-    }
-}
+export const onRequest = handleRequest;
