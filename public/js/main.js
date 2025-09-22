@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const variables = { budget: parseInt(budget), cargo: parseInt(cargo) };
 
         try {
-            const response = await fetch('/functions/api/trade', {
+            const response = await fetch('/api/trade', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query, variables }),
