@@ -4,7 +4,7 @@
   "description": "Ce projet est une application web \"full-stack\" construite avec Cloudflare Pages et Functions, utilisant une base de données D1 pour stocker des \"missions\".",
   "main": "index.js",
   "scripts": {
-    "build:css": ".\\node_modules\\.bin\\tailwindcss -i .\\public\\input.css -o .\\public\\output.css",
+    "build": "npx tailwindcss -i ./public/input.css -o ./public/output.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -2,9 +2,6 @@ name = "log187-hub"
 pages_build_output_dir = "public"
 compatibility_date = "2023-10-30"
 
-[build]
-command = "npm install && npx tailwindcss -i ./public/input.css -o ./public/output.css"
-
 [[d1_databases]]
 binding = "DB"
 database_name = "log187-missions"
