@@ -1,0 +1,7 @@
+# Fichiers et dossiers générés par Node.js
+node_modules
+npm-debug.log
+.DS_Store
+
+# Fichiers générés par Wrangler
+.wrangler

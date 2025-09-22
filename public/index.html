@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log 187 - Operations Hub v3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Ajout de la bibliothèque d'icônes Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --color-bg: #0a192f;
+            --color-text-primary: #ccd6f6;
+            --color-text-secondary: #8892b0;
+            --color-accent-industrial: #64ffda;
+            --color-accent-support: #ffc65c;
+            --color-border: #334155;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Exo 2', sans-serif; 
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            overflow-x: hidden;
+        }
+        
+        #animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                radial-gradient(ellipse at top, transparent 0%, var(--color-bg) 70%),
+                radial-gradient(ellipse at bottom, transparent 0%, var(--color-bg) 70%),
+                repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(100, 255, 218, 0.05) 2px, transparent 49px),
+                repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(100, 255, 218, 0.05) 2px, transparent 49px);
+            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+            animation: moveGrid 60s linear infinite;
+        }
+        @keyframes moveGrid {
+            from { background-position: 0 0, 0 0, 0 0, 0 0; }
+            to { background-position: 0 0, 0 0, -1000px 500px, -1000px 500px; }
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hud-panel {
+            background-color: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.1);
+        }
+        
+        .tab-button { transition: all 0.3s ease; color: var(--color-text-secondary); border-bottom: 2px solid transparent; }
+        .tab-button.active { color: var(--color-accent-industrial); border-bottom-color: var(--color-accent-industrial); }
+        .tab-button:not(.active):hover { color: var(--color-text-primary); background-color: rgba(100, 255, 218, 0.05); }
+
+        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease; }
+        .modal-overlay.hidden { pointer-events: none; opacity: 0; }
+        .modal-overlay.hidden .modal-content { transform: scale(0.95); }
+
+        .accordion-header { transition: background-color 0.3s ease; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, padding 0.5s ease-out; }
+        .accordion-icon { transition: transform 0.3s ease; }
+        .accordion-item.open .accordion-icon { transform: rotate(180deg); }
+        .accordion-item.open .accordion-content { max-height: 2000px; padding-top: 1rem; padding-bottom: 1rem; }
+        
+        /* --- Nouveaux styles pour les formulaires et boutons --- */
+        .form-input, .form-select {
+            background-color: rgba(10, 25, 47, 0.8);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            transition: all 0.3s ease;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--color-accent-industrial);
+            box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.3);
+        }
+        .form-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238892b0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: var(--color-accent-industrial);
+            color: var(--color-bg);
+            border: 1px solid var(--color-accent-industrial);
+        }
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--color-accent-industrial);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-accent-industrial);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Loading Screen Styles --- */
+        #loading-screen {
+            position: fixed; inset: 0; z-index: 100;
+            background-color: var(--color-bg);
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.7s ease-out, visibility 0.7s ease-out;
+            opacity: 1; visibility: visible;
+        }
+        body.loaded #loading-screen { opacity: 0; visibility: hidden; pointer-events: none; }
+    </style>
+</head>
+<body class="min-h-screen antialiased">
+    
+    <div id="loading-screen" class="loader-content text-center">
+        <div>
+            <h1 class="font-orbitron text-4xl font-bold text-slate-100 tracking-widest">LOG <span class="text-amber-400">187</span></h1>
+            <div class="spinner mx-auto mt-6"></div>
+            <p class="text-slate-400 mt-4 tracking-wider">INITIALISATION DES SYSTÈMES...</p>
+        </div>
+    </div>
+
+    <div id="animated-bg"></div>
+
+    <div id="app" class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="font-orbitron text-4xl md:text-6xl font-bold text-slate-100 tracking-widest">
+                LOG <span class="text-amber-400">187</span>
+            </h1>
+            <p class="text-slate-400 mt-2 text-lg tracking-wider">OPERATIONS HUB</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center mb-8 rounded-lg p-2 gap-2">
+            <button class="tab-button active inline-flex items-center py-2 px-4" data-tab="commerce"><i data-lucide="bar-chart-3" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Commerce</span></button>
+            <button class="tab-button inline-flex items-center py-2 px-4" data-tab="guides"><i data-lucide="book-open" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Guides</span></button>
+            <button class="tab-button inline-flex items-center py-2 px-4" data-tab="planner"><i data-lucide="clipboard-list" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Planificateur</span></button>
+            <button class="tab-button inline-flex items-center py-2 px-4" data-tab="assistance"><i data-lucide="siren" class="h-5 w-5 mr-0 sm:mr-2"></i><span class="hidden sm:inline">Assistance</span></button>
+        </nav>
+
+        <main>
+            <!-- ONGLET COMMERCE -->
+            <div id="commerce" class="tab-content active hud-panel rounded-lg p-6">
+                <h2 class="font-orbitron text-2xl text-amber-400 mb-4 flex items-center gap-3"><i data-lucide="search"></i>Chercheur de Routes Commerciales</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="budget" class="block text-sm font-medium text-slate-400 mb-1">Budget (aUEC)</label>
+                        <input type="number" id="budget" class="form-input w-full rounded-md p-2" value="250000">
+                    </div>
+                    <div>
+                        <label for="cargo" class="block text-sm font-medium text-slate-400 mb-1">Soute (SCU)</label>
+                        <input type="number" id="cargo" class="form-input w-full rounded-md p-2" value="64">
+                    </div>
+                    <div class="md:self-end">
+                        <button id="find-routes-btn" class="btn btn-primary w-full"><i data-lucide="send"></i><span>Lancer la Recherche</span></button>
+                    </div>
+                </div>
+                <div id="trade-results-container">
+                    <p class="text-center text-slate-400">Entrez votre budget et la capacité de votre soute pour trouver les routes les plus rentables.</p>
+                </div>
+            </div>
+
+            <!-- ONGLET GUIDES -->
+            <div id="guides" class="tab-content">
+                 <p class="text-center text-slate-400 text-sm mb-4">Guides compilés à partir de sources communautaires pour les patchs récents.</p>
+                <div class="hud-panel rounded-lg p-2 md:p-4 space-y-2">
+                    <div class="accordion-item bg-slate-900/50 rounded-lg border border-slate-700">
+                        <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
+                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="graduation-cap" class="text-amber-400"></i>Guide du Débutant</span>
+                            <i data-lucide="chevron-down" class="accordion-icon text-slate-400"></i>
+                        </button>
+                        <div class="accordion-content px-4 text-slate-300 space-y-3">
+                            <p><strong>Premières missions :</strong> Optez pour des missions de livraison ou de recherche. Elles sont sûres et vous apprennent les bases de la navigation et du vol.</p>
+                            <p><strong>Équipement essentiel :</strong> Un sac à dos, un Multi-Tool avec l'attachement Tracteur Beam sont indispensables pour commencer. L'attachement minier est un plus pour les grottes.</p>
+                        </div>
+                    </div>
+                     <div class="accordion-item bg-slate-900/50 rounded-lg border border-slate-700">
+                        <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
+                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="briefcase" class="text-amber-400"></i>Professions & Gameplay</span>
+                             <i data-lucide="chevron-down" class="accordion-icon text-slate-400"></i>
+                        </button>
+                        <div class="accordion-content px-4 text-slate-300 space-y-3">
+                           <p><strong>Minage :</strong> Achetez un ROC ou un Prospector. Scannez les astéroïdes (touche V) et cherchez des roches riches en Quantainium, Laranite, ou Agricium pour un profit maximal.</p>
+                           <p><strong>Chasse à la prime (Bounty Hunting) :</strong> Commencez par les cibles VHRT (Very High Risk Target) une fois que vous avez un chasseur bien équipé comme un Gladius ou un Sabre. Visez les moteurs et les générateurs.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-slate-900/50 rounded-lg border border-slate-700">
+                        <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
+                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="swords" class="text-amber-400"></i>Builds PvP / Dogfight</span>
+                            <i data-lucide="chevron-down" class="accordion-icon text-slate-400"></i>
+                        </button>
+                        <div class="accordion-content px-4 text-slate-300 space-y-3">
+                           <p><strong>Chasseur léger (Gladius/Arrow) :</strong> Full Répéteurs Laser (CF-337 Panther). Boucliers rapides comme les FR-66. Idéal pour sa manœuvrabilité.</p>
+                           <p><strong>Chasseur lourd (Vanguard) :</strong> Arme S5 fixe (AD5B), complétée par des armes S2. Boucliers résistants. Excellent pour le jeu en duo ou solo contre des cibles plus grosses.</p>
+                        </div>
+                    </div>
+                     <div class="accordion-item bg-slate-900/50 rounded-lg border border-slate-700">
+                         <button class="accordion-header w-full flex justify-between items-center p-4 text-left">
+                            <span class="font-orbitron text-lg flex items-center gap-3"><i data-lucide="link" class="text-amber-400"></i>Ressources Utiles</span>
+                             <i data-lucide="chevron-down" class="accordion-icon text-slate-400"></i>
+                        </button>
+                        <div class="accordion-content px-4 text-slate-300 space-y-2">
+                            <a href="https://sc-trade.tools/" target="_blank" class="flex items-center gap-2 hover:text-amber-400">SC Trade Tools <i data-lucide="external-link" class="h-4 w-4"></i></a>
+                            <a href="https://www.erkul.games/" target="_blank" class="flex items-center gap-2 hover:text-amber-400">Erkul Games (Loadouts) <i data-lucide="external-link" class="h-4 w-4"></i></a>
+                            <a href="https://finder.cstone.space/" target="_blank" class="flex items-center gap-2 hover:text-amber-400">Cornerstone (Minage) <i data-lucide="external-link" class="h-4 w-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ONGLET PLANIFICATEUR -->
+            <div id="planner" class="tab-content hud-panel rounded-lg p-6">
+                <h2 class="font-orbitron text-2xl text-amber-400 mb-4 flex items-center gap-3"><i data-lucide="file-plus-2"></i>Créer un Plan de Mission</h2>
+                <form id="mission-planner-form" class="space-y-4">
+                    <input type="text" id="mission-title" placeholder="Titre de la mission (ex: Opération Nighthawk)" class="form-input w-full rounded-md p-2" required>
+                    <select id="mission-type" class="form-select w-full rounded-md p-2" required>
+                        <option value="Bounty">Chasse à la prime</option>
+                        <option value="Mining">Minage</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Exploration">Exploration</option>
+                    </select>
+                    <textarea id="mission-details" placeholder="Détails, objectifs, membres assignés..." class="form-input w-full rounded-md p-2 h-24" required></textarea>
+                    <button type="submit" class="btn btn-primary"><i data-lucide="plus-circle"></i>Ajouter au planning</button>
+                </form>
+                <div class="mt-8">
+                    <h3 class="font-orbitron text-xl text-slate-300 mb-4">Missions Actives</h3>
+                    <div id="mission-list" class="space-y-3">
+                         <p class="text-center text-slate-400">Aucune mission planifiée pour le moment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ONGLET ASSISTANCE -->
+            <div id="assistance" class="tab-content hud-panel rounded-lg p-6">
+                <h2 class="font-orbitron text-2xl text-amber-400 mb-4 flex items-center gap-3"><i data-lucide="radio-tower"></i>Émettre une Balise de Détresse</h2>
+                <form id="assistance-form" class="space-y-4">
+                    <select id="assistance-type" class="form-select w-full rounded-md p-2" required>
+                        <option value="Medical">Assistance Médicale</option>
+                        <option value="Combat">Soutien au Combat</option>
+                        <option value="Transport">Transport / Récupération</option>
+                        <option value="Refuel">Ravitaillement</option>
+                    </select>
+                     <input type="text" id="assistance-location" placeholder="Localisation (ex: Près de Yela, ceinture d'astéroïdes)" class="form-input w-full rounded-md p-2" required>
+                    <textarea id="assistance-details" placeholder="Description de la situation..." class="form-input w-full rounded-md p-2 h-24"></textarea>
+                    <button type="submit" class="btn btn-primary bg-red-500 border-red-500 hover:bg-transparent hover:text-red-400 hover:border-red-400"><i data-lucide="alert-triangle"></i>Envoyer la demande</button>
+                </form>
+            </div>
+        </main>
+        
+        <footer class="text-center text-slate-600 mt-12 text-sm">
+            <p>&copy; 2025 - Corporation Log 187</p>
+            <button id="open-credits-modal" class="text-slate-500 hover:text-amber-400 transition">Crédits & Créateur</button>
+        </footer>
+    </div>
+    
+    <div id="credits-modal" class="modal-overlay hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+        <div class="modal-content hud-panel rounded-lg p-8 max-w-md w-full text-center relative">
+            <button id="close-credits-modal" class="absolute top-2 right-2 text-slate-400 hover:text-white transition"><i data-lucide="x"></i></button>
+            <h3 class="font-orbitron text-2xl text-amber-400 mb-4">Crédits</h3>
+            <p class="text-slate-300">Interface conçue et développée par [Votre Nom/Pseudo].</p>
+            <p class="text-slate-400 text-sm mt-2">Données commerciales fournies par l'API de SC Trade Tools.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Initialisation des icônes Lucide ---
+            lucide.createIcons();
+
+            // --- Loading Screen Logic ---
+            window.onload = () => {
+                setTimeout(() => document.body.classList.add('loaded'), 500);
+            };
+
+            // --- Tab Navigation Logic ---
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTabId = button.dataset.tab;
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    tabContents.forEach(content => content.classList.toggle('active', content.id === targetTabId));
+                });
+            });
+
+            // --- Accordion Logic ---
+            document.querySelectorAll('.accordion-item .accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.parentElement.classList.toggle('open');
+                });
+            });
+
+            // --- Modal Logic ---
+            const openModalBtn = document.getElementById('open-credits-modal');
+            const closeModalBtn = document.getElementById('close-credits-modal');
+            const modal = document.getElementById('credits-modal');
+            const openModal = () => modal.classList.remove('hidden');
+            const closeModal = () => modal.classList.add('hidden');
+            openModalBtn.addEventListener('click', openModal);
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', e => e.target === modal && closeModal());
+            document.addEventListener('keydown', e => e.key === 'Escape' && !modal.classList.contains('hidden') && closeModal());
+            
+            // --- LOGIQUE DE L'ONGLET COMMERCE ---
+            const findRoutesBtn = document.getElementById('find-routes-btn');
+            const resultsContainer = document.getElementById('trade-results-container');
+            const API_URL = 'https://api.sc-trade.tools/graphql';
+
+            async function fetchTradeData(budget, cargo) {
+                const query = `
+                    query {
+                        findTrade(budget: ${budget}, cargo: ${cargo}, ship: CATERPILLAR) {
+                            profit,
+                            source {
+                                name
+                                code
+                            },
+                            destination {
+                                name
+                                code
+                            },
+                            item {
+                                name
+                                class
+                            },
+                            buy {
+                                price
+                            },
+                            sell {
+                                price
+                            },
+                            scu
+                        }
+                    }
+                `;
+                
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query }),
+                    });
+                    if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                    const json = await response.json();
+                    return json.data.findTrade;
+                } catch (error) {
+                    console.error("Failed to fetch trade data:", error);
+                    return null;
+                }
+            }
+
+            function displayTradeResults(routes) {
+                if (!routes || routes.length === 0) {
+                    resultsContainer.innerHTML = `<p class="text-center text-amber-400">Aucune route profitable trouvée pour ces critères. Essayez d'augmenter le budget.</p>`;
+                    return;
+                }
+                
+                let html = '<div class="space-y-4">';
+                routes.slice(0, 10).forEach(route => { // On affiche les 10 meilleures
+                    html += `
+                        <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <div class="md:col-span-2">
+                                <p class="font-bold text-lg text-slate-200">${route.item.name}</p>
+                                <p class="text-sm text-slate-400">${Math.round(route.scu)} SCU</p>
+                            </div>
+                            <div class="text-sm">
+                                <p class="text-slate-500">ACHAT</p>
+                                <p>${route.source.name}</p>
+                                <p class="font-mono text-slate-300">${route.buy.price.toFixed(2)} aUEC</p>
+                            </div>
+                             <div class="text-sm">
+                                <p class="text-slate-500">VENTE</p>
+                                <p>${route.destination.name}</p>
+                                <p class="font-mono text-slate-300">${route.sell.price.toFixed(2)} aUEC</p>
+                            </div>
+                            <div class="md:col-span-4 mt-2 md:mt-0 text-center bg-slate-800 p-2 rounded-md">
+                                <p class="font-bold text-xl text-green-400">Profit: ${Math.round(route.profit).toLocaleString('fr-FR')} aUEC</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                resultsContainer.innerHTML = html;
+            }
+
+            findRoutesBtn.addEventListener('click', async () => {
+                const budget = document.getElementById('budget').value;
+                const cargo = document.getElementById('cargo').value;
+
+                if (!budget || !cargo) {
+                    resultsContainer.innerHTML = `<p class="text-center text-red-400">Veuillez entrer un budget et une capacité de soute.</p>`;
+                    return;
+                }
+                
+                resultsContainer.innerHTML = `<div class="flex justify-center items-center gap-4"><div class="spinner"></div><p>Recherche des meilleures routes...</p></div>`;
+                findRoutesBtn.disabled = true;
+                findRoutesBtn.querySelector('span').textContent = 'Recherche...';
+
+                const routes = await fetchTradeData(budget, cargo);
+                displayTradeResults(routes);
+                
+                findRoutesBtn.disabled = false;
+                findRoutesBtn.querySelector('span').textContent = 'Lancer la Recherche';
+            });
+            
+            // --- LOGIQUE DU PLANIFICATEUR (Full-Stack) ---
+            const missionForm = document.getElementById('mission-planner-form');
+            const missionList = document.getElementById('mission-list');
+            const plannerApiUrl = '/functions/api/missions';
+
+            // Récupérer et afficher les missions
+            async function fetchAndRenderMissions() {
+                missionList.innerHTML = `<div class="flex justify-center items-center gap-4"><div class="spinner"></div><p>Chargement des missions...</p></div>`;
+                try {
+                    const response = await fetch(plannerApiUrl);
+                    if (!response.ok) throw new Error('Erreur de chargement du planning');
+                    const missions = await response.json();
+
+                    if (!missions || missions.length === 0) {
+                        missionList.innerHTML = `<p class="text-center text-slate-400">Aucune mission planifiée pour le moment.</p>`;
+                        return;
+                    }
+
+                    missionList.innerHTML = missions.map(mission => `
+                        <div class="mission-card bg-slate-900/50 border border-slate-700 rounded-lg p-4" data-id="${mission.id}">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold py-1 px-2 rounded-full bg-amber-500/20 text-amber-400">${mission.type}</span>
+                                    <h4 class="font-orbitron text-lg mt-2">${mission.title}</h4>
+                                </div>
+                                <button class="delete-mission-btn text-slate-500 hover:text-red-400" data-id="${mission.id}">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                            <p class="text-slate-300 mt-2 whitespace-pre-wrap">${mission.details}</p>
+                            <p class="text-xs text-slate-500 mt-3">ID: ${mission.id} - Créé le: ${new Date(mission.created_at).toLocaleDateString()}</p>
+                        </div>
+                    `).join('');
+                    lucide.createIcons();
+                } catch (error) {
+                    missionList.innerHTML = `<p class="text-center text-red-400">${error.message}</p>`;
+                }
+            }
+
+            // Ajouter une mission
+            missionForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = missionForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+
+                const missionData = {
+                    title: document.getElementById('mission-title').value,
+                    type: document.getElementById('mission-type').value,
+                    details: document.getElementById('mission-details').value,
+                };
+
+                try {
+                    const response = await fetch(plannerApiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(missionData),
+                    });
+                    if (!response.ok) throw new Error('Impossible d\'ajouter la mission');
+                    missionForm.reset();
+                    await fetchAndRenderMissions();
+                } catch (error) {
+                    alert(error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Supprimer une mission (délégation d'événement)
+            missionList.addEventListener('click', async (e) => {
+                const deleteBtn = e.target.closest('.delete-mission-btn');
+                if (deleteBtn) {
+                    const missionId = deleteBtn.dataset.id;
+                    if (!confirm(`Voulez-vous vraiment supprimer la mission ID: ${missionId} ?`)) return;
+
+                    try {
+                        const response = await fetch(`${plannerApiUrl}?id=${missionId}`, {
+                            method: 'DELETE',
+                        });
+                        if (!response.ok) throw new Error('La suppression a échoué');
+                        
+                        // Supprimer l'élément du DOM
+                        document.querySelector(`.mission-card[data-id="${missionId}"]`).remove();
+
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                }
+            });
+
+            // Chargement initial des missions
+            if (document.getElementById('planner').classList.contains('active')) {
+                fetchAndRenderMissions();
+            }
+            document.querySelector('.tab-button[data-tab="planner"]').addEventListener('click', fetchAndRenderMissions);
+
+            // --- LOGIQUE ASSISTANCE ---
+             const assistanceForm = document.getElementById('assistance-form');
+             assistanceForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Simule l'envoi
+                const btn = assistanceForm.querySelector('button');
+                btn.innerHTML = `<div class="spinner !w-5 !h-5"></div><span>Envoi en cours...</span>`;
+                btn.disabled = true;
+
+                setTimeout(() => {
+                    btn.innerHTML = `<i data-lucide="check-circle"></i><span>Balise envoyée !</span>`;
+                     setTimeout(() => {
+                        btn.innerHTML = `<i data-lucide="alert-triangle"></i>Envoyer la demande`;
+                        btn.disabled = false;
+                        assistanceForm.reset();
+                        lucide.createIcons();
+                    }, 2500);
+                }, 1500);
+             });
+        });
+    </script>
+</body>
+</html>
