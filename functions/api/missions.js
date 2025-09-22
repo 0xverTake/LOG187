@@ -77,3 +77,22 @@ export async function onRequestDelete({ request, env }) {
         });
     }
 }
+
+// Routeur principal pour gérer toutes les méthodes HTTP
+export async function onRequest(context) {
+  switch (context.request.method) {
+    case 'GET':
+      return await onRequestGet(context);
+    case 'POST':
+      return await onRequestPost(context);
+    case 'DELETE':
+      return await onRequestDelete(context);
+    case 'OPTIONS':
+      return await onRequestOptions(context);
+    default:
+      return new Response('Method Not Allowed', {
+        status: 405,
+        headers: corsHeaders,
+      });
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "log187",
+  "version": "1.0.0",
+  "description": "Ce projet est une application web \"full-stack\" construite avec Cloudflare Pages et Functions, utilisant une base de données D1 pour stocker des \"missions\".",
+  "main": "index.js",
+  "scripts": {
+    "build:css": ".\\node_modules\\.bin\\tailwindcss -i .\\public\\input.css -o .\\public\\output.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xverTake/LOG187.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/0xverTake/LOG187/issues"
+  },
+  "homepage": "https://github.com/0xverTake/LOG187#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.13"
+  }
+}
